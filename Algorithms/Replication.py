@@ -68,8 +68,6 @@ def FrequencyMap(Text, k):
 
     return freq  # Return the frequency map
 
-
-
 def FrequentWords(Text, k):
     """
     Finds the most frequent substrings of length 'k' in the given text.
@@ -102,10 +100,8 @@ def ReverseComplement(Pattern):
 
     Args:
         Pattern (str): The DNA sequence pattern.
-
     Returns:
         str: The reverse complement of the input pattern.
-
     Raises:
         ValueError: If the input pattern contains invalid nucleotides or is empty.
     """
@@ -137,7 +133,8 @@ def ReverseComplement(Pattern):
 
 def PatternMatching(Pattern, Genome):
     """
-    Finds all occurrences of a pattern in a genome utilizing a generator expression. 
+    Finds all occurrences of a pattern in a genome utilizing a generator expression.
+
     The generator expression iterates over the range of possible starting positions 
     in the genome, yielding each position if the pattern is found starting from that 
     position. By using a generator expression, the function avoids creating a large 
@@ -168,3 +165,64 @@ def PatternMatching(Pattern, Genome):
         Pattern, i, i + Pattern_length) != -1)
 
     return list(positions)
+
+def ClumpFinder(Genome, k, L, t):
+    """
+    Finds k-mers forming (L, t)-clumps within a genome.
+
+    A (L, t)-clump is defined as a region of length L in the genome where a specific k-mer occurs at least t times.
+    This function scans through the genome using a sliding window approach, identifying regions where k-mers are 
+    overrepresented. By adjusting the parameters k, L, and t, researchers can target specific motifs or regulatory 
+    elements within the genome.
+
+    Args:
+        Genome (str): The DNA sequence to analyze.
+        k (int): The length of the k-mers to search for.
+        L (int): The length of the sliding window.
+        t (int): The minimum number of occurrences required for a k-mer to form a clump.
+
+    Returns:
+        set: A set containing the k-mers forming (L, t)-clumps within the genome.
+
+    Raises:
+        ValueError: If Genome is empty or if k, L, or t are non-positive.
+    """
+    # Check for empty input or invalid values of k, L, or t
+    if not Genome:
+        raise ValueError("Genome must not be empty")
+    # Check for non-positive values of k, L, or t
+    if k <= 0 or L <= 0 or t <= 0:
+        raise ValueError("k, L, and t must be positive integers")
+
+    clumps = set()  # Initialize the set to store clumps
+    kmer_counts = {}  # Dictionary to store counts of k-mers within the sliding window
+
+    # Iterate through the first window of length L
+    window = Genome[:L]
+    # Iterate through each position in the window to extract k-mers
+    for j in range(len(window) - k + 1):
+        kmer = window[j:j + k]
+        # Increment the count of the current k-mer, check if it reaches the threshold t, if it does add to set
+        kmer_counts[kmer] = kmer_counts.get(kmer, 0) + 1
+        if kmer_counts[kmer] == t:
+            clumps.add(kmer)
+
+    # Slide the window and update k-mer counts
+    for i in range(1, len(Genome) - L + 1):
+        # Extract the first k-mer from the previous window, Decrement the count of the removed k-mer
+        prev_kmer = Genome[i - 1:i - 1 + k]
+        kmer_counts[prev_kmer] -= 1
+        # If the count becomes zero after decrementing remove the k-mer from the dictionary of k-mer counts
+        if kmer_counts[prev_kmer] == 0:
+            del kmer_counts[prev_kmer]
+
+        # Extract the last k-mer from the current window
+        new_kmer = Genome[i + L - k:i + L]
+        # Increment the count of the new k-mer
+        kmer_counts[new_kmer] = kmer_counts.get(new_kmer, 0) + 1
+        # Check if the count of the new k-mer reaches the threshold t, if yes, add the k-mer to the set of clumps
+        if kmer_counts[new_kmer] == t:
+            clumps.add(new_kmer)
+
+    # Return the set of k-mers forming (L, t)-clumps within the genome
+    return clumps
