@@ -30,10 +30,9 @@ def PatternCount(Text, Pattern):
     # Return the final count of occurrences
     return count
 
-
 def FrequencyMap(Text, k):
     """
-    Generates a frequency map of substrings of length 'k' in the given text.
+    Generates a frequency map of substrings of length 'k' in the given text using a sliding window approach.
     Args:
         Text (str): The text to analyze.
         k (int): The length of substrings.
@@ -45,10 +44,21 @@ def FrequencyMap(Text, k):
         raise ValueError("Text must not be empty")
     if k <= 0:
         raise ValueError("k must be a positive integer")
-    # Use Counter to count occurrences of substrings of length 'k'
-    substrings = [Text[i:i+k] for i in range(len(Text) - k + 1)]
-    freq = Counter(substrings)
-    return freq
+
+    freq = {}  # Initialize frequency map
+    # Initialize the sliding window with the first k characters
+    window = Text[:k]
+    freq[window] = 1  # Initialize frequency count for the initial window
+
+    # Iterate through the text, updating the sliding window and frequency map
+    for i in range(k, len(Text)):
+        # Update the sliding window by removing the first character and adding the next character
+        window = window[1:] + Text[i]
+        # Update the frequency count for the current window
+        freq[window] = freq.get(window, 0) + 1
+
+    return freq  # Return the frequency map
+
 
 
 def FrequentWords(Text, k):
