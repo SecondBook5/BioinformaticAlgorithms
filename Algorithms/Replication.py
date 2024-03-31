@@ -172,7 +172,7 @@ def ClumpFinder(Genome, k, L, t):
 
     A (L, t)-clump is defined as a region of length L in the genome where a specific k-mer occurs at least t times.
     This function scans through the genome using a sliding window approach, identifying regions where k-mers are 
-    overrepresented. By adjusting the parameters k, L, and t, researchers can target specific motifs or regulatory 
+    overrepresented. By adjusting the parameters k, L, and t, we can target specific motifs or regulatory 
     elements within the genome.
 
     Args:
