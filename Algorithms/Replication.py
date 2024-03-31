@@ -1,4 +1,5 @@
 #Replication.py
+from collections import Counter
 
 
 def PatternCount(Text, Pattern):
@@ -10,7 +11,15 @@ def PatternCount(Text, Pattern):
     Returns:
         int: The count of occurrences of the pattern in the text.
     """
-    # Initialize the count of occurences to 0
+    # Check for empty inputs
+    if not Text:
+        raise ValueError("Text must not be empty")
+    if not Pattern:
+        raise ValueError("Pattern must not be empty")
+    # If the pattern is longer than the text, it cannot occur
+    if len(Pattern) > len(Text):
+        raise ValueError("Pattern length cannot be greater than Text length")
+    # Initialize the count of occurrences to 0
     count = 0
     # Iterate through each possible starting position of a substring of length Pattern in Text
     for i in range(len(Text) - len(Pattern) + 1):
@@ -31,22 +40,14 @@ def FrequencyMap(Text, k):
     Returns:
         dict: A dictionary where keys are substrings of length 'k' and values are their frequencies.
     """
-    # Initialize an empty dictionary to store frequencies of substrings
-    freq = {}
-    # Get the length of the text
-    n = len(Text)
-    # Loop through each possible substring of length 'k' in the text
-    for i in range(n - k + 1):
-        # Extract the substring of length 'k' starting at index 'i'
-        Pattern = Text[i:i + k]
-        # Check if the substring is already in the frequency map
-        if Pattern in freq:
-            # If yes, increment its frequency
-            freq[Pattern] += 1
-        else:
-            # If not, add it to the frequency map with frequency 1
-            freq[Pattern] = 1
-    # Return the frequency map
+    # Check for empty input or invalid value of k
+    if not Text:
+        raise ValueError("Text must not be empty")
+    if k <= 0:
+        raise ValueError("k must be a positive integer")
+    # Use Counter to count occurrences of substrings of length 'k'
+    substrings = [Text[i:i+k] for i in range(len(Text) - k + 1)]
+    freq = Counter(substrings)
     return freq
 
 
@@ -61,24 +62,16 @@ def FrequentWords(Text, k):
     Returns:
         list: A list of the most frequent substrings of length 'k'.
     """
-
+    # Check for empty input
+    if not Text:
+        return []
     # Generate frequency map of substrings of length 'k'
-    freq = FrequencyMap(Text, k)
-
-    # Initialize variables to store maximum frequency and corresponding words
-    max_freq = 0
-    frequent_words = []
-
-    # Iterate through the frequency map to find maximum frequency and corresponding words
-    for key, value in freq.items():
-        # If current frequency is greater than current maximum frequency
-        if value > max_freq:
-            max_freq = value  # Update maximum frequency
-            frequent_words = [key]  # Start a new list with the current key
-        # If current frequency is equal to current maximum frequency
-        elif value == max_freq:
-            # Add the current key to the list of frequent words
-            frequent_words.append(key)
-
+    # Convert text to lowercase for case-insensitive comparison
+    freq = FrequencyMap(Text.lower(), k)
+    # Find maximum frequency
+    # Get the maximum frequency value, or 0 if the map is empty
+    max_freq = max(freq.values(), default=0)
+    # Use list comprehension to filter frequent words
+    frequent_words = [key for key, value in freq.items() if value == max_freq]
     # Return the list of most frequent substrings
     return frequent_words
