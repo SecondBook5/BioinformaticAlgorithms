@@ -133,7 +133,7 @@ def ReverseComplement(Pattern):
 
 def PatternMatching(Pattern, Genome):
     """
-    Finds all occurrences of a pattern in a genome utilizing a generator expression.
+    Finds all occurrences of a pattern in a genome 
 
     The generator expression iterates over the range of possible starting positions 
     in the genome, yielding each position if the pattern is found starting from that 
