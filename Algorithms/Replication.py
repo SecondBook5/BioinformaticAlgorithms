@@ -133,3 +133,30 @@ def ReverseComplement(Pattern):
 
     # Join the reverse complement list and return the result
     return ''.join(reverse_complement)
+
+
+def PatternMatching(Pattern, Genome):
+    """
+    Finds all occurrences of a pattern in a genome.
+
+    Args:
+        Pattern (str): The pattern string to search for.
+        Genome (str): The genome string in which to search for the pattern.
+
+    Returns:
+        list: A list containing the starting positions of all occurrences of the pattern in the genome.
+
+    Raises:
+        ValueError: If the pattern or genome is empty.
+    """
+    if not Pattern or not Genome:
+        raise ValueError("Pattern and Genome must not be empty")
+
+    # Find the length of the pattern
+    Pattern_length = len(Pattern)
+
+    # Use list comprehension to find all occurrences of the pattern in the genome
+    positions = [i for i in range(len(
+        Genome) - Pattern_length + 1) if Genome.find(Pattern, i, i + Pattern_length) != -1]
+
+    return positions
