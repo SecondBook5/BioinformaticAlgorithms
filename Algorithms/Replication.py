@@ -137,7 +137,11 @@ def ReverseComplement(Pattern):
 
 def PatternMatching(Pattern, Genome):
     """
-    Finds all occurrences of a pattern in a genome.
+    Finds all occurrences of a pattern in a genome utilizing a generator expression. 
+    The generator expression iterates over the range of possible starting positions 
+    in the genome, yielding each position if the pattern is found starting from that 
+    position. By using a generator expression, the function avoids creating a large 
+    list of positions in memory, making it more memory-efficient, especially for large genomes.
 
     Args:
         Pattern (str): The pattern string to search for.
@@ -152,11 +156,15 @@ def PatternMatching(Pattern, Genome):
     if not Pattern or not Genome:
         raise ValueError("Pattern and Genome must not be empty")
 
-    # Find the length of the pattern
+     # Find the length of the pattern and genome
     Pattern_length = len(Pattern)
+    Genome_length = len(Genome)
 
-    # Use list comprehension to find all occurrences of the pattern in the genome
-    positions = [i for i in range(len(
-        Genome) - Pattern_length + 1) if Genome.find(Pattern, i, i + Pattern_length) != -1]
+    # Calculate the maximum index for the search
+    max_index = Genome_length - Pattern_length + 1
 
-    return positions
+    # Use a generator expression to find all occurrences of the pattern in the genome
+    positions = (i for i in range(max_index) if Genome.find(
+        Pattern, i, i + Pattern_length) != -1)
+
+    return list(positions)
