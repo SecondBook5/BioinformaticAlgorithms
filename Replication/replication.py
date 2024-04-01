@@ -27,8 +27,8 @@ def PatternCount(Text, Pattern):
     count = 0
     # Iterate through each possible starting position of a substring of length Pattern in Text
     for i in range(len(Text) - len(Pattern) + 1):
-        # Check if the substring from position i to i + len(Pattern) is equal to the given Pattern
-        if Text[i:i+len(Pattern)] == Pattern:
+        # Check if the substring from position i to i + len(Pattern) (converted to lowercase) is equal to the given Pattern (converted to lowercase)
+        if Text[i:i+len(Pattern)].lower() == Pattern.lower():
             # If equal, increment the count
             count += 1
     # Return the final count of occurrences
@@ -56,17 +56,39 @@ def FrequencyMap(Text, k):
 
     freq = {}  # Initialize frequency map
     # Initialize the sliding window with the first k characters
-    window = Text[:k]
+    window = Text[:k].upper()
     freq[window] = 1  # Initialize frequency count for the initial window
 
     # Iterate through the text, updating the sliding window and frequency map
-    for i in range(k, len(Text)):
+    for i in range(1, len(Text) - k + 1):
         # Update the sliding window by removing the first character and adding the next character
-        window = window[1:] + Text[i]
+        window = Text[i:i + k].upper()
         # Update the frequency count for the current window
         freq[window] = freq.get(window, 0) + 1
 
     return freq  # Return the frequency map
+
+
+def MaxMap(freqMap):
+    """
+    Finds the maximum value in a map and returns the value, kmers with that value, and their length.
+
+    Args:
+    - freqMap (dict): A map (dictionary) with keys as strings and values as integers.
+
+    Returns:
+    - tuple: A tuple containing the maximum value, kmers with that value, and their length.
+    """
+    max_value = max(
+        freqMap.values())  # Find the maximum value in the dictionary
+    # Find kmers with maximum value
+    max_kmers = [kmer for kmer, count in freqMap.items() if count == max_value]
+    kmer_length = len(max_kmers[0])  # Get the length of the kmers
+    print(f"The maximum value is: {max_value}")
+    print(f"The kmers with the maximum value are: {max_kmers}")
+    print(f"The length of the kmers is: {kmer_length}")
+    # Return the maximum value, kmers, and their length as a tuple
+    return max_value, max_kmers, kmer_length
 
 def FrequentWords(Text, k):
     """
@@ -87,7 +109,7 @@ def FrequentWords(Text, k):
     freq = FrequencyMap(Text.lower(), k)
     # Find maximum frequency
     # Get the maximum frequency value, or 0 if the map is empty
-    max_freq = max(freq.values(), default=0)
+    max_freq, _, _ = MaxMap(freq)
     # Use list comprehension to filter frequent words
     frequent_words = [key for key, value in freq.items() if value == max_freq]
     # Return the list of most frequent substrings
